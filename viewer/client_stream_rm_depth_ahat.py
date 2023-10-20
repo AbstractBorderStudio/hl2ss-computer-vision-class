@@ -16,11 +16,12 @@ import cv2
 import hl2ss_imshow
 import hl2ss
 import hl2ss_lnm
+import sys
 
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = "192.168.1.7"
+host = '169.254.58.146'#"192.168.1.7"
 
 # Operating mode
 # 0: video
@@ -68,14 +69,32 @@ listener.start()
 client = hl2ss_lnm.rx_rm_depth_ahat(host, hl2ss.StreamPort.RM_DEPTH_AHAT, mode=mode, divisor=divisor, profile_z=profile_z, profile_ab=profile_ab)
 client.open()
 
+counter = 0
+#t_file = open("output/test.txt", 'w')
+np.set_printoptions(threshold=sys.maxsize)
+
 while (enable):
     data = client.get_next_packet()
     
-    print(f'Pose at time {data.timestamp}')
-    print(data.pose)
+    #print(f'Pose at time {data.timestamp}')
+    #print(data.pose)
     
+    if (counter < 500):
+        # file.write(str(data.payload.depth))
+        # counter += 1
+        path = f"output/imgs_long/ab/frame{counter}.png"
+        path2 = f"output/imgs_long/depth/frame{counter}.png"
+        cv2.imwrite(path, (data.payload.ab / np.max(data.payload.ab))*255)
+        cv2.imwrite(path2, (data.payload.depth / np.max(data.payload.depth))*255)
+        #np.savetxt("output/test.txt", data.payload.depth)
+        counter += 1
+        print(counter)
+
     cv2.imshow('Depth', data.payload.depth / np.max(data.payload.depth)) # Scaled for visibility
     cv2.imshow('AB', data.payload.ab / np.max(data.payload.ab)) # Scaled for visibility
+
+
+
     cv2.waitKey(1)
 
 client.close()

@@ -19,16 +19,16 @@ import hl2ss_mp
 import hl2ss_3dcv
 
 from mmdet.apis import inference_detector, init_detector
-from mmdet.core import INSTANCE_OFFSET
+from mmdet import INSTANCE_OFFSET #mmdet.core
 from mmdet.datasets import CocoPanopticDataset
 
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '192.168.1.7'
+host = '169.254.58.146'#'192.168.1.7'
 
 # Calibration path (must exist but can be empty)
-calibration_path = '../calibration/'
+calibration_path = '/calibration'
 
 # Camera parameters
 pv_width = 640

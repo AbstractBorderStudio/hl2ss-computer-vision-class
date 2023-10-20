@@ -12,7 +12,7 @@ import hl2ss_rus
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '192.168.1.7'
+host = '169.254.58.146'#'192.168.1.7'
 
 # Initial position in world space (x, y, z) in meters
 position = [0, 0, 0]
@@ -21,7 +21,7 @@ position = [0, 0, 0]
 rotation = [0, 0, 0, 1]
 
 # Initial scale in meters
-scale = [0.2, 0.2, 0.2]
+scale = [0.1, 0.1, 0.1]
 
 # Initial color
 rgba = [1, 1, 1, 1]
