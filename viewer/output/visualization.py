@@ -3,10 +3,10 @@ import cv2
 import numpy as np
 
 # Path to the folder containing your images
-image_folder = 'C:/Users/danie/Documents/Personale/Università/Polito/Progetti/ComputerVision/hl2ss-computer-vision-class/viewer/output/imgs_long/ab'
+image_folder = 'imgs_long/depth'
 
 # Get a list of image files in the folder
-images = [img for img in os.listdir(image_folder) if img.endswith(".png")] #if #(not img.endswith("ab.pgm") and img.endswith(".pgm"))]
+images = [img for img in os.listdir(image_folder) if img.endswith('.png')]#(not img.endswith("ab.pgm") and img.endswith(".png"))]
 
 # Sort the image files by name if needed
 images.sort()  # This will ensure the images are shown in order
@@ -23,11 +23,10 @@ for image in images:
     frame = cv2.imread(img_path)
 
     # Apply binary thresholding
-    _, binary_image = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY)
+    #_, binary_image = cv2.threshold(frame, 0, 255, cv2.THRESH_BINARY)
     
-    video.write(binary_image)
-    
-    cv2.imshow('Image Sequence', binary_image)
+    video.write(frame)
+    cv2.imshow('Image Sequence', frame)
 
 
     # Break the loop if the user presses the 'q' key
