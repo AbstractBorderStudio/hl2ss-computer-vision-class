@@ -13,3 +13,5 @@ path = 'imgs/frame0.png'
 im = cv2.imread(path)
 plt.imshow(im/255)
 plt.show()
+
+
