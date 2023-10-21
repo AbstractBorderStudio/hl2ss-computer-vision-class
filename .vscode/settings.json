@@ -1,0 +1,3 @@
+{
+    "pandoc.pdfOptString": "--indented-code-classes=c --highlight-style zenburn -V geometry:\"top=2cm, bottom=1.5cm, left=2cm, right=2cm\" -V colorlinks -V urlcolor=NavyBlue -V toccolor=black --toc -N"
+}
