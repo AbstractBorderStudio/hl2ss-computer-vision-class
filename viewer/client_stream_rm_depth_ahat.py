@@ -17,6 +17,7 @@ import hl2ss_imshow
 import hl2ss
 import hl2ss_lnm
 import sys
+import output.Project.segmentation as sgt
 
 # Settings --------------------------------------------------------------------
 
@@ -71,27 +72,29 @@ client.open()
 
 counter = 0
 #t_file = open("output/test.txt", 'w')
-np.set_printoptions(threshold=sys.maxsize)
+#np.set_printoptions(threshold=sys.maxsize)
 
 while (enable):
     data = client.get_next_packet()
-    
+    #print(data.uv2xy) 
     #print(f'Pose at time {data.timestamp}')
     #print(data.pose)
     
-    if (counter < 500):
-        # file.write(str(data.payload.depth))
-        # counter += 1
-        path = f"output/imgs_long/ab/frame{counter}.png"
-        path2 = f"output/imgs_long/depth/frame{counter}.png"
-        cv2.imwrite(path, (data.payload.ab / np.max(data.payload.ab))*255)
-        cv2.imwrite(path2, (data.payload.depth / np.max(data.payload.depth))*255)
-        #np.savetxt("output/test.txt", data.payload.depth)
-        counter += 1
-        print(counter)
+    # if (counter < 500):
+    #     # file.write(str(data.payload.depth))
+    #     # counter += 1
+    #     path = f"output/imgs_long/ab/frame{counter}.png"
+    #     path2 = f"output/imgs_long/depth/frame{counter}.png"
+    #     cv2.imwrite(path, (data.payload.ab / np.max(data.payload.ab))*255)
+    #     cv2.imwrite(path2, (data.payload.depth / np.max(data.payload.depth))*255)
+    #     #np.savetxt("output/test.txt", data.payload.depth)
+    #     counter += 1
+    #     print(counter)
 
-    cv2.imshow('Depth', data.payload.depth / np.max(data.payload.depth)) # Scaled for visibility
-    cv2.imshow('AB', data.payload.ab / np.max(data.payload.ab)) # Scaled for visibility
+    res = sgt.FindCirclesSimpleBlob(data.payload.ab / np.max(data.payload.ab))
+
+    #cv2.imshow('Depth', data.payload.depth / np.max(data.payload.depth)) # Scaled for visibility
+    cv2.imshow('AB', res) # Scaled for visibility
 
 
 
