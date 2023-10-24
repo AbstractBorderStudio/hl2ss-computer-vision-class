@@ -94,7 +94,15 @@ def FindCirclesSimpleBlob(img):
     dilation = cv2.dilate(edges, np.ones((2,2)), iterations=2)
 
     keypoints = detector.detect(dilation)
+    points = cv2.KeyPoint.convert(keypoints)
+    
+    if points is not None:
+        x,y = points[0]
+        r,g,b = img[int(x),int(y)]/255
+        print(r)
+
     res = cv2.drawKeypoints(gray, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DEFAULT)
+    
 
     return res#cv2.hconcat([thresh, dilation, res])
 
