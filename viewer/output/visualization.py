@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-import Project.segmentation
+import Project.segmentation as sgt
 
 # Path to the folder containing your images
 image_folder = 'imgs_long/ab'
@@ -24,14 +24,14 @@ for image in images:
     frame = cv2.imread(img_path)
 
     # apply edge 
-    circle = Project.segmentation.FindCirclesSimpleBlob(frame)
-    circle2 = Project.segmentation.FindCirclesFine(frame)
+    #circle = Project.segmentation.FindCirclesSimpleBlob(frame)
+    circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(80,150,60), edgeMethod=2)
 
     #video.write(circle)
 
     # show result
-    cv2.imshow('simple blob detection', circle)
-    cv2.imshow('custom blob detection', circle2)
+    cv2.imshow('simple blob detection', circle2)
+    #cv2.imshow('custom blob detection', circle2)
 
     # Break the loop if the user presses the 'q'q key
     if cv2.waitKey(25) & 0xFF == ord('q'):
