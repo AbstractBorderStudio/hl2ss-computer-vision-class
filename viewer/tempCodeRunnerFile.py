@@ -1,1 +1,1 @@
-output
+data.payload.ab / np.max(data.payload.ab)

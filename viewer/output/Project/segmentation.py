@@ -138,6 +138,8 @@ class Blob:
         if applyMorph:
             morph = res = cv2.dilate(res, np.ones((Blob.d_kernel_size,Blob.d_kernel_size)), iterations=1)
 
+        return res
+
         if blobMethod == Blob.Config.HOUGHCIRCLE:
             # apply hough transform to detect circles
             circles = cv2.HoughCircles(res, cv2.HOUGH_GRADIENT_ALT, dp=1.5, minDist=50, param1=160, param2=0.05, minRadius=10, maxRadius=100)
