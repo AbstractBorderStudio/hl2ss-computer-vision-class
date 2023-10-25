@@ -25,7 +25,7 @@ for image in images:
 
     # apply edge 
     #circle = Project.segmentation.FindCirclesSimpleBlob(frame)
-    circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(80,150,60), edgeMethod=2)
+    circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(80,150,60))
 
     #video.write(circle)
 
