@@ -138,29 +138,31 @@ class Blob:
         if applyMorph:
             morph = res = cv2.dilate(res, np.ones((Blob.d_kernel_size,Blob.d_kernel_size)), iterations=1)
 
-        return res
-
         if blobMethod == Blob.Config.HOUGHCIRCLE:
             # apply hough transform to detect circles
-            circles = cv2.HoughCircles(res, cv2.HOUGH_GRADIENT_ALT, dp=1.5, minDist=50, param1=160, param2=0.05, minRadius=10, maxRadius=100)
+            circles = cv2.HoughCircles(res, cv2.HOUGH_GRADIENT_ALT, dp=1.5, minDist=25, param1=150, param2=0.1, minRadius=2, maxRadius=100)
             # add circles to 
             
             if circles is not None:
+                img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
                 for circle in circles[0,:]:
                     x, y, r = circle
                     center = (int(x), int(y))
-                    cv2.circle(img, center, int(r), marker_color, thickness=3) # add cv2.FILLED to fill the circle 
+                    cv2.circle(img, center, int(r), marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
+            return img, circles
         elif blobMethod == Blob.Config.SIMPLE_BLOB:
             keypoints = Blob.detector.detect(res)
 
             if keypoints is not None:
                 points = cv2.KeyPoint.convert(keypoints)
-                if np.size(points) > 0:
-                    x,y = points[0]
-                    r,g,b = img[int(x),int(y)]/255
-                    print(r)
+                # if np.size(points) > 0:
+                #     x,y = points[0]
+                #     r,g,b = img[int(x),int(y)]/255
+                #     print(r)
 
                 img = cv2.drawKeypoints(img, keypoints, np.array([]), marker_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+            
+            return img, keypoints
 
         """
         return cv2.hconcat([edge, morph, img]) to show
@@ -172,7 +174,7 @@ class Blob:
             edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)   
             morph = cv2.cvtColor(morph, cv2.COLOR_GRAY2BGR)   
             return cv2.hconcat([edge, morph, img])
-        return img
+        return img, None
 
 
 

@@ -1,1 +1,2 @@
-data.payload.ab / np.max(data.payload.ab)
+
+            print(depth[x, y])

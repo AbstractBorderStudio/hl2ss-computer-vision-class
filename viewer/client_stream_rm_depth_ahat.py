@@ -22,7 +22,7 @@ import output.Project.segmentation as sgt
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '169.254.58.146'#"192.168.1.7"
+host = '169.254.58.146'#'169.254.50.241'#"192.168.1.7"
 
 # Operating mode
 # 0: video
@@ -80,26 +80,33 @@ while (enable):
     #print(f'Pose at time {data.timestamp}')
     #print(data.pose)
     
-    # if (counter < 500):
-    #     # file.write(str(data.payload.depth))
-    #     # counter += 1
-    #     path = f"output/imgs_long/ab/frame{counter}.png"
-    #     path2 = f"output/imgs_long/depth/frame{counter}.png"
-    #     cv2.imwrite(path, (data.payload.ab / np.max(data.payload.ab))*255)
-    #     cv2.imwrite(path2, (data.payload.depth / np.max(data.payload.depth))*255)
-    #     #np.savetxt("output/test.txt", data.payload.depth)
-    #     counter += 1
-    #     print(counter)
+    if (counter < 500):
+        # file.write(str(data.payload.depth))
+        # counter += 1
+        path = f"output/imgs_long_2/ab/frame{counter}.png"
+        path2 = f"output/imgs_long_2/depth/frame{counter}.png"
+        cv2.imwrite(path, (data.payload.ab / np.max(data.payload.ab))*255)
+        cv2.imwrite(path2, (data.payload.depth / np.max(data.payload.depth))*255)
+        #np.savetxt("output/test.txt", data.payload.depth)
+        counter += 1
+        print(counter)
 
     # For RM Depth AHAT divide depth by 250 to convert to meters.
     #depth_meters = data.payload.depth / 250
 
-    res = sgt.Blob.FindCirclesFine(data.payload.ab / np.max(data.payload.ab) * 255, applyGray=False, edgeMethod=sgt.Blob.Config.SOBEL)
+    frame = np.uint8(data.payload.ab / np.max(data.payload.ab) * 255) 
+    #depth = data.payload.depth
 
-    #cv2.imshow('Depth', data.payload.depth / np.max(data.payload.depth)) # Scaled for visibility
-    cv2.imshow('AB', res) # Scaled for visibility
+    #res, keypoints = sgt.Blob.FindCirclesFine(frame, applyGray=False)
 
+    # if keypoints is not None:
+    #     a = []
+    #     for k in keypoints[0, :]:
+    #         x, y, r = k
+    #         a.append(depth[int(x), int(y)] / 250)
+    #     print(a)
 
+    cv2.imshow('AB', frame) # Scaled for visibility
 
     cv2.waitKey(1)
 
