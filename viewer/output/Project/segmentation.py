@@ -144,7 +144,6 @@ class Blob:
             # add circles to 
             
             if circles is not None:
-                img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
                 for circle in circles[0,:]:
                     x, y, r = circle
                     center = (int(x), int(y))
@@ -170,9 +169,7 @@ class Blob:
 
         return img to only show the finale result. 
         """
-        if showPasses:
-            edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)   
-            morph = cv2.cvtColor(morph, cv2.COLOR_GRAY2BGR)   
+        if showPasses:   
             return cv2.hconcat([edge, morph, img])
         return img, None
 
