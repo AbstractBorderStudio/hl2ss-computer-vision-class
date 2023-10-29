@@ -25,12 +25,12 @@ for image in images:
 
     # apply edge 
     #circle = Project.segmentation.FindCirclesSimpleBlob(frame)
-    circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(80,150,60), showPasses=True)
-
+    #circle2, a = sgt.Blob.FindCirclesFine(frame, marker_color=(0,0,255))
+    circle3, b = sgt.ciProvo(frame)
     #video.write(circle)
 
     # show result
-    cv2.imshow('simple blob detection', circle2)
+    cv2.imshow('simple blob detection', circle3)
     #cv2.imshow('custom blob detection', circle2)
 
     # Break the loop if the user presses the 'q'q key

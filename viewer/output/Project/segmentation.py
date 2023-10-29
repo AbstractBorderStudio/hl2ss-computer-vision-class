@@ -2,6 +2,11 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 from enum import Enum
+from skimage.feature import blob_dog, blob_log, blob_doh
+from skimage.morphology import *
+from skimage.measure import label, regionprops
+
+
 
 class Blob:
     """
@@ -53,6 +58,7 @@ class Blob:
         detector = cv2.SimpleBlobDetector(params)
     else : 
         detector = cv2.SimpleBlobDetector_create(params)
+    # ============================================= #
     # ============================================= #
 
     def FindCirclesFine(
@@ -144,7 +150,6 @@ class Blob:
             # add circles to 
             
             if circles is not None:
-                img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
                 for circle in circles[0,:]:
                     x, y, r = circle
                     center = (int(x), int(y))
@@ -170,9 +175,7 @@ class Blob:
 
         return img to only show the finale result. 
         """
-        if showPasses:
-            edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)   
-            morph = cv2.cvtColor(morph, cv2.COLOR_GRAY2BGR)   
+        if showPasses:   
             return cv2.hconcat([edge, morph, img])
         return img, None
 
@@ -180,7 +183,6 @@ class Blob:
 
 
 # =========== simple blob detection param initialization ===========
-
 
 
 
@@ -224,5 +226,16 @@ def FindCirclesSimpleBlob(img):
 
     return res#cv2.hconcat([thresh, dilation, res])
 
+def ciProvo(sample):
+    marker_color=(0,255,0)
+    sample_g = gray = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
+    sample_b = sample_g >80
+    blobs = blob_log(sample_b, max_sigma=25, threshold=0.67)
+    for circle in blobs:
+        x, y, r = circle
+        center = (int(x), int(y))
+        cv2.circle(sample, center, int(r), marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
+    return sample, blobs
+         
 
-
+                                    
