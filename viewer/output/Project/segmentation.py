@@ -71,7 +71,8 @@ class Blob:
             marker_color=(0,255,0),
             showPasses=False,
             edgeMethod=Config.CANNY,
-            blobMethod=Config.HOUGHCIRCLE):
+            blobMethod=Config.HOUGHCIRCLE,
+            applyLog = True):
         """
         # Description
 
@@ -139,25 +140,43 @@ class Blob:
                 edge = res = cv2.Canny(res, Blob.edge_thresh[0], Blob.edge_thresh[1], apertureSize=3)
             elif edgeMethod == Blob.Config.SOBEL:
                 edge = res = cv2.Sobel(src=res, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
+            
 
         # apply dialtion to highlight circlular areas.
         if applyMorph:
             morph = res = cv2.dilate(res, np.ones((Blob.d_kernel_size,Blob.d_kernel_size)), iterations=1)
-
-        if blobMethod == Blob.Config.HOUGHCIRCLE:
+        
+        if applyLog == True:
+                res = gray >80
+                blob = blob_log(res, max_sigma=25, threshold=0.67)
+                print(blob)
+                if blob is not None:
+                    for circle in blob:
+                        x, y, r = circle
+                        center = (int(x), int(y))
+                        print(circle)
+                        cv2.circle(img, center, int(r), marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
+                    return img, blob
+                elif blobMethod == Blob.Config.SIMPLE_BLOB:
+                    keypoints = Blob.detector.detect(res)
+        elif blobMethod == Blob.Config.HOUGHCIRCLE:
             # apply hough transform to detect circles
             circles = cv2.HoughCircles(res, cv2.HOUGH_GRADIENT_ALT, dp=1.5, minDist=25, param1=150, param2=0.1, minRadius=2, maxRadius=100)
             # add circles to 
-            
+           
             if circles is not None:
                 for circle in circles[0,:]:
                     x, y, r = circle
                     center = (int(x), int(y))
+                    print(circle)
                     cv2.circle(img, center, int(r), marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
             return img, circles
+        
+        
         elif blobMethod == Blob.Config.SIMPLE_BLOB:
             keypoints = Blob.detector.detect(res)
-
+            
+           
             if keypoints is not None:
                 points = cv2.KeyPoint.convert(keypoints)
                 # if np.size(points) > 0:
@@ -180,7 +199,21 @@ class Blob:
         return img, None
 
 
+    
+    def ciProvo(sample):
+            marker_color=(0,255,0)
+            
+          
+            sample_g = gray = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
+            sample_b = sample_g >80
+            
+            blobs = blob_dog(sample_b, max_sigma=40, threshold=0.4)
 
+            for circle in blobs:
+                x, y, r = circle
+                center = (int(x), int(y))
+                sample = cv2.circle(sample, center, int(r), marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
+            return sample, blobs
 
 # =========== simple blob detection param initialization ===========
 
@@ -226,16 +259,6 @@ def FindCirclesSimpleBlob(img):
 
     return res#cv2.hconcat([thresh, dilation, res])
 
-def ciProvo(sample):
-    marker_color=(0,255,0)
-    sample_g = gray = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
-    sample_b = sample_g >80
-    blobs = blob_log(sample_b, max_sigma=25, threshold=0.67)
-    for circle in blobs:
-        x, y, r = circle
-        center = (int(x), int(y))
-        cv2.circle(sample, center, int(r), marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
-    return sample, blobs
          
 
                                     
