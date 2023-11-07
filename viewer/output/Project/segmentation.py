@@ -159,7 +159,7 @@ class Blob:
                 #     r,g,b = img[int(x),int(y)]/255
                 #     print(r)
 
-                img = cv2.drawKeypoints(img, keypoints, np.array([]), marker_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+                img = cv2.drawKeypoints(img, keypoints, np.array([]), (marker_color), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
             
             return img, keypoints
 
