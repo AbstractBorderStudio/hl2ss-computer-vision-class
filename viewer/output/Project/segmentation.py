@@ -16,10 +16,10 @@ class Blob:
     
     # ========= HOUGHCIRCLE CONFIGURATION ========= #
     # Gaussian blur kernel
-    sm_kernel_size = 3 # (3,9,15,...3*k)
+    sm_kernel_size = 3 # (3,9,15,...3*k) -> valore precedente 3
     
     # Colorspace Thresholding
-    th_thresh = (80,255) # (threshold_1,threshold_2) 
+    th_thresh = (65,255) # (threshold_1,threshold_2) 
     
     # Canny Edge Detection
     edge_thresh = (160,80) # (threshold_1,threshold_2)
@@ -31,21 +31,27 @@ class Blob:
     # ==== SIMPLE BLOB DETECTION CONFIGURATION ==== #
     params = cv2.SimpleBlobDetector_Params()
 
+    params.filterByArea = True
+    params.minArea = 100
+    params.maxArea = 10000
+    
     # Change thresholds
     params.minThreshold = 20 #20
-    params.maxThreshold = 200 #200
+    params.maxThreshold = 255 #200
 
     # Filter by Circularity
     params.filterByCircularity = True
-    params.minCircularity = 0.1 #0.5
+    params.minCircularity = 0.5 #0.5
 
     # Filter by Convexity
     params.filterByConvexity = True
-    params.minConvexity = 0.9 #0.8
+    params.minConvexity = 0.5 #0.8
 
     # Filter by Inertia
     params.filterByInertia = True #True
-    params.minInertiaRatio = 0.1 #0.1
+    params.minInertiaRatio = 0.5 #0.1
+    
+    params.filterByColor = False
 
     # Create a detector with the parameters
     ver = (cv2.__version__).split('.')
@@ -148,9 +154,10 @@ class Blob:
                     x, y, r = circle
                     center = (int(x), int(y))
                     cv2.circle(img, center, int(r), marker_color, thickness=3) # add cv2.FILLED to fill the circle 
+                    
         elif blobMethod == Blob.Config.SIMPLE_BLOB:
             keypoints = Blob.detector.detect(res)
-
+            
             if keypoints is not None:
                 points = cv2.KeyPoint.convert(keypoints)
                 if np.size(points) > 0:
@@ -167,18 +174,17 @@ class Blob:
         return img to only show the finale result. 
         """
         if showPasses:
-            edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)   
+            if applyEdge:
+                edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)   
+                return cv2.hconcat([edge, morph, img])
             morph = cv2.cvtColor(morph, cv2.COLOR_GRAY2BGR)   
-            return cv2.hconcat([edge, morph, img])
+            return cv2.hconcat([morph, img])
         return img
 
 
 
 
 # =========== simple blob detection param initialization ===========
-
-
-
 
 
 def FindCirclesSimpleBlob(img):
@@ -205,7 +211,7 @@ def FindCirclesSimpleBlob(img):
     # apply dialtion to highlight circlular areas.
     dilation = cv2.dilate(edges, np.ones((2,2)), iterations=2)
 
-    keypoints = detector.detect(dilation)
+    keypoints = detector.detect(dilation) 
 
     if keypoints is not None:
         points = cv2.KeyPoint.convert(keypoints)
@@ -217,7 +223,7 @@ def FindCirclesSimpleBlob(img):
         res = cv2.drawKeypoints(gray, keypoints, np.array([]), (0,0,255), cv2.DRAW_MATCHES_FLAGS_DEFAULT)
     else:
         res = gray
-
+        
     return res#cv2.hconcat([thresh, dilation, res])
 
 

@@ -4,13 +4,15 @@
 import numpy as np
 import cv2 
 import sys
+import Project.segmentation as sgt
 
 np.set_printoptions(threshold=sys.maxsize)
 
 # Read image
-path = f"../output/imgs/depth/frame8.png" 
+path = f"./imgs/depth/frame8.png" 
 im = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
 
+im_edited = sgt.Blob.FindCirclesFine(im, applyGray=False, applyEdge=False)
 # Setup SimpleBlobDetector parameters.
 params = cv2.SimpleBlobDetector_Params()
  
@@ -37,7 +39,7 @@ if int(ver[0]) < 3 :
 else : 
   detector = cv2.SimpleBlobDetector_create(params)
 
-keypoints = detector.detect(im)
+keypoints = detector.detect(im_edited)
 
 print(keypoints)
 # Draw detected blobs as red circles.

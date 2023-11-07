@@ -94,10 +94,10 @@ while (enable):
     # For RM Depth AHAT divide depth by 250 to convert to meters.
     #depth_meters = data.payload.depth / 250
 
-    res = sgt.FindCirclesSimpleBlob(data.payload.ab / np.max(data.payload.ab))
+    #res = sgt.FindCirclesSimpleBlob(data.payload.ab / np.max(data.payload.ab))
 
     #cv2.imshow('Depth', data.payload.depth / np.max(data.payload.depth)) # Scaled for visibility
-    cv2.imshow('AB', res) # Scaled for visibility
+    cv2.imshow('AB', data.payload.ab / np.max(data.payload.ab)) # Scaled for visibility
 
 
 
