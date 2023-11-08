@@ -3,6 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from enum import Enum
 
+current_kp = []
+
 class Blob:
     """
     BlobDetection API for Computer Vision. 
@@ -82,7 +84,7 @@ class Blob:
             4.2 isolate only blob area
         5. apply morphological operators
             5.1 use a dilate function to reduce/remove gaps in circles
-        6. apply HoughCircles to find circles
+        6. apply HoughCircles/SimpleBlobDetection to find circles
 
         # Variables
 
@@ -141,8 +143,8 @@ class Blob:
         if blobMethod == Blob.Config.HOUGHCIRCLE:
             # apply hough transform to detect circles
             circles = cv2.HoughCircles(res, cv2.HOUGH_GRADIENT_ALT, dp=1.5, minDist=25, param1=150, param2=0.1, minRadius=2, maxRadius=100)
-            # add circles to 
             
+            # add circles to 
             if circles is not None:
                 for circle in circles[0,:]:
                     x, y, r = circle
@@ -153,15 +155,31 @@ class Blob:
             keypoints = Blob.detector.detect(res)
 
             if keypoints is not None:
-                points = cv2.KeyPoint.convert(keypoints)
-                # if np.size(points) > 0:
-                #     x,y = points[0]
-                #     r,g,b = img[int(x),int(y)]/255
-                #     print(r)
+                pts = cv2.KeyPoint.convert(keypoints)
+                #points = np.array(current_kp)
+                if np.size(pts) > 0:
+                    for p in pts:
+                        if np.size(current_kp) <= 3:
+                            current_kp.append(p)
+                        else:
+                            for c in current_kp:
+                                if np.linalg.norm(c-p) < .1:
+                                    c = p
+                                else:
+                                    current_kp.remove(c)
+                
+                for p in pts:
+                    x, y = p
+                    center = (int(x), int(y))
+                    cv2.circle(img, center, 10, marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
 
-                img = cv2.drawKeypoints(img, keypoints, np.array([]), (marker_color), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
-            
-            return img, keypoints
+                #if np.size(points) > 0:
+                #    x,y = points[0]
+                #    r,g,b = img[int(x),int(y)]/255
+                #    print(r)
+
+                #img = cv2.drawKeypoints(img, current_kp, np.array([]), (marker_color), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+            #return img, keypoints
 
         """
         return cv2.hconcat([edge, morph, img]) to show
@@ -170,5 +188,7 @@ class Blob:
         return img to only show the finale result. 
         """
         if showPasses:   
-            return cv2.hconcat([edge, morph, img])
+            e = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)
+            t = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
+            return cv2.hconcat([t, e, img]), None
         return img, None

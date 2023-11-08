@@ -19,16 +19,19 @@ images.sort()  # This will ensure the images are shown in order
 # Create a VideoWriter object to display the images
 #video = cv2.VideoWriter('ab_long.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 15, (width, height))
 
+kp = []
+
 for image in images:
     img_path = os.path.join(image_folder, image)
     frame = cv2.imread(img_path)
 
     # apply edge 
     #circle = Project.segmentation.FindCirclesSimpleBlob(frame)
-    circle2, a = sgt.Blob.FindCirclesFine(
+    circle2, kp = sgt.Blob.FindCirclesFine(
         frame, 
         marker_color=(0,0,255), 
-        blobMethod=sgt.Blob.Config.HOUGHCIRCLE)
+        blobMethod=sgt.Blob.Config.SIMPLE_BLOB,
+        showPasses=True)
 
     #video.write(circle)
 
