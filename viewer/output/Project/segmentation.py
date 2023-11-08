@@ -5,6 +5,8 @@ from enum import Enum
 from skimage.feature import blob_dog, blob_log, blob_doh
 from skimage.morphology import *
 from skimage.measure import label, regionprops
+from skimage.color import rgb2gray
+from math import sqrt
 
 
 
@@ -203,15 +205,17 @@ class Blob:
     def ciProvo(sample):
             marker_color=(0,255,0)
             
-          
-            sample_g = gray = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
-            sample_b = sample_g >80
+            gray = cv2.cvtColor(sample, cv2.COLOR_BGR2GRAY)
+           # thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 77, 3)
+
+            blobs= blob_log(gray, max_sigma=30, num_sigma=20, threshold=.1)
             
-            blobs = blob_dog(sample_b, max_sigma=40, threshold=0.4)
+           # blobs=blobs_log[:, 2] = blobs_log[:, 2] * sqrt(2)
+            #print(blobs)
 
             for circle in blobs:
                 x, y, r = circle
-                center = (int(x), int(y))
+                center = (int(y), int(x))
                 sample = cv2.circle(sample, center, int(r), marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
             return sample, blobs
 
