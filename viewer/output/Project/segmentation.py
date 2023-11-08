@@ -88,7 +88,7 @@ class Blob:
 
         # Variables
 
-        - img: 
+        img: 
             - frame to analize
         - applyGray (True): 
             - allow/skip grayscale convertion pass 
@@ -127,7 +127,7 @@ class Blob:
 
         # threshold
         if applyThresh:
-            thresh = res = cv2.threshold(res, Blob.th_thresh[0], Blob.th_thresh[1], cv2.THRESH_BINARY)[1]
+            thresh = res = cv2.threshold(blur, Blob.th_thresh[0], Blob.th_thresh[1], cv2.THRESH_BINARY)[1]
 
         # compute Canny edge detection
         if applyEdge:
@@ -159,19 +159,28 @@ class Blob:
                 #points = np.array(current_kp)
                 if np.size(pts) > 0:
                     for p in pts:
-                        if np.size(current_kp) <= 3:
+                        if np.size(current_kp) <= 4:
                             current_kp.append(p)
-                        else:
+                        if np.size(current_kp) > 0:
+                            i = 0
                             for c in current_kp:
-                                if np.linalg.norm(c-p) < .1:
-                                    c = p
-                                else:
-                                    current_kp.remove(c)
-                
-                for p in pts:
-                    x, y = p
-                    center = (int(x), int(y))
-                    cv2.circle(img, center, 10, marker_color, cv2.FILLED) # add cv2.FILLED to fill the circle 
+                                p1 = current_kp[i]
+                                #if np.linalg.norm(c-p) < 30:
+                                # if abs(p - p1) > 0.1:
+                                #     print("SI")
+                                if np.sqrt(pow((p[0]-p1[0]), 2) + pow((p[1]-p1[1]), 2)) < 50:
+                                    p1 = p
+
+                                i += 1
+                                
+                        print(current_kp)
+
+                if np.size(current_kp) > 0:
+                    for p in current_kp:
+                        x, y = p
+                        center = (int(x), int(y))
+                        cv2.circle(img, center, 15, marker_color, thickness=2) # add cv2.FILLED to fill the circle 
+
 
                 #if np.size(points) > 0:
                 #    x,y = points[0]
@@ -191,4 +200,4 @@ class Blob:
             e = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)
             t = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
             return cv2.hconcat([t, e, img]), None
-        return img, None
+        return img, current_kp
