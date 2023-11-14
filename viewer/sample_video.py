@@ -16,23 +16,23 @@ import hl2ss_mp
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '192.168.1.7'
+host = '169.254.50.241'
 
 # Ports
 ports = [
     hl2ss.StreamPort.RM_VLC_LEFTFRONT,
-    hl2ss.StreamPort.RM_VLC_LEFTLEFT,
+    #hl2ss.StreamPort.RM_VLC_LEFTLEFT,
     hl2ss.StreamPort.RM_VLC_RIGHTFRONT,
-    hl2ss.StreamPort.RM_VLC_RIGHTRIGHT,
+    #hl2ss.StreamPort.RM_VLC_RIGHTRIGHT,
     #hl2ss.StreamPort.RM_DEPTH_AHAT,
-    hl2ss.StreamPort.RM_DEPTH_LONGTHROW,
+    #hl2ss.StreamPort.RM_DEPTH_LONGTHROW,
     hl2ss.StreamPort.PERSONAL_VIDEO,
-    hl2ss.StreamPort.RM_IMU_ACCELEROMETER,
-    hl2ss.StreamPort.RM_IMU_GYROSCOPE,
-    hl2ss.StreamPort.RM_IMU_MAGNETOMETER,
-    hl2ss.StreamPort.MICROPHONE,
-    hl2ss.StreamPort.SPATIAL_INPUT,
-    hl2ss.StreamPort.EXTENDED_EYE_TRACKER,
+    #hl2ss.StreamPort.RM_IMU_ACCELEROMETER,
+    #hl2ss.StreamPort.RM_IMU_GYROSCOPE,
+    #hl2ss.StreamPort.RM_IMU_MAGNETOMETER,
+    #hl2ss.StreamPort.MICROPHONE,
+    #hl2ss.StreamPort.SPATIAL_INPUT,
+    #hl2ss.StreamPort.EXTENDED_EYE_TRACKER,
     ]
 
 # PV parameters
@@ -137,9 +137,9 @@ if __name__ == '__main__':
     }
 
     # Store -------------------------------------------------------------------
-    pv_path = '/viewer/output/stereo/src/pv'
-    lf_path = '/viewer/output/stereo/src/lf'
-    rf_path = '/viewer/output/stereo/src/rf'
+    pv_path = 'C:/Users/ilari/OneDrive/Documents/GitHub/hl2ss-computer-vision-class/viewer/output/stereo/src/pv/'
+    lf_path = 'C:/Users/ilari/OneDrive/Documents/GitHub/hl2ss-computer-vision-class/viewer/output/stereo/src/lf/'
+    rf_path = 'C:/Users/ilari/OneDrive/Documents/GitHub/hl2ss-computer-vision-class/viewer/output/stereo/src/rf/'
 
     def store_pv(port, payload, c):
         if (payload.image is not None and payload.image.size > 0):
@@ -175,7 +175,7 @@ if __name__ == '__main__':
             _, data = sinks[port].get_most_recent_frame()
             if (data is not None):
                 DISPLAY_MAP[port](port, data.payload)
-                STORE_MAP[port](port, data.payload)
+                STORE_MAP[port](port, data.payload,counter)
         counter += 1
         cv2.waitKey(1)
 
