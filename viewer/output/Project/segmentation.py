@@ -35,19 +35,23 @@ class Blob:
 
     # Change thresholds
     params.minThreshold = 20 #20
-    params.maxThreshold = 200 #200
+    params.maxThreshold = 255 #200
 
     # Filter by Circularity
     params.filterByCircularity = True
-    params.minCircularity = 0.1 #0.5
+    params.minCircularity = 0.5 #0.1 #0.5
 
     # Filter by Convexity
     params.filterByConvexity = True
-    params.minConvexity = 0.9 #0.8
+    params.minConvexity = 0.5#0.9 #0.8
 
     # Filter by Inertia
     params.filterByInertia = True #True
-    params.minInertiaRatio = 0.1 #0.1
+    params.minInertiaRatio = 0.5 #0.1
+    
+    params.filterByArea = True
+    params.minArea = 10
+    params.maxArea = 10000
 
     # Create a detector with the parameters
     ver = (cv2.__version__).split('.')
@@ -155,31 +159,31 @@ class Blob:
             keypoints = Blob.detector.detect(res)
 
             if keypoints is not None:
-                pts = cv2.KeyPoint.convert(keypoints)
+            #    pts = cv2.KeyPoint.convert(keypoints)
                 #points = np.array(current_kp)
-                if np.size(pts) > 0:
-                    for p in pts:
-                        if np.size(current_kp) <= 4:
-                            current_kp.append(p)
-                        if np.size(current_kp) > 0:
-                            i = 0
-                            for c in current_kp:
-                                p1 = current_kp[i]
-                                #if np.linalg.norm(c-p) < 30:
-                                # if abs(p - p1) > 0.1:
-                                #     print("SI")
-                                if np.sqrt(pow((p[0]-p1[0]), 2) + pow((p[1]-p1[1]), 2)) < 50:
-                                    p1 = p
+                # if np.size(pts) > 0:
+                #     for p in pts:
+                #         if np.size(current_kp) <= 4:
+                #             current_kp.append(p)
+                #         if np.size(current_kp) > 0:
+                #             i = 0
+                #             for c in current_kp:
+                #                 p1 = current_kp[i]
+                #                 #if np.linalg.norm(c-p) < 30:
+                #                 # if abs(p - p1) > 0.1:
+                #                 #     print("SI")
+                #                 if np.sqrt(pow((p[0]-p1[0]), 2) + pow((p[1]-p1[1]), 2)) < 50:
+                #                     p1 = p
 
-                                i += 1
+                #                 i += 1
                                 
-                        print(current_kp)
+                #        print(current_kp)
 
-                if np.size(current_kp) > 0:
-                    for p in current_kp:
-                        x, y = p
-                        center = (int(x), int(y))
-                        cv2.circle(img, center, 15, marker_color, thickness=2) # add cv2.FILLED to fill the circle 
+                # if np.size(current_kp) > 0:
+                #     for p in current_kp:
+                #         x, y = p
+                #         center = (int(x), int(y))
+                #         cv2.circle(img, center, 15, marker_color, thickness=2) # add cv2.FILLED to fill the circle 
 
 
                 #if np.size(points) > 0:
@@ -187,7 +191,7 @@ class Blob:
                 #    r,g,b = img[int(x),int(y)]/255
                 #    print(r)
 
-                #img = cv2.drawKeypoints(img, current_kp, np.array([]), (marker_color), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
+                img = cv2.drawKeypoints(img, keypoints, np.array([]), (marker_color), cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
             #return img, keypoints
 
         """
@@ -196,8 +200,9 @@ class Blob:
 
         return img to only show the finale result. 
         """
-        if showPasses:   
+        if showPasses:
+            #t = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
             e = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)
-            t = cv2.cvtColor(thresh, cv2.COLOR_GRAY2BGR)
-            return cv2.hconcat([t, e, img]), None
-        return img, current_kp
+            #return cv2.hconcat([e, img]), cv2.KeyPoint.convert(keypoints)
+            return img, cv2.KeyPoint.convert(keypoints)
+        return img, cv2.KeyPoint.convert(keypoints)

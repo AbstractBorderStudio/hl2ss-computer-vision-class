@@ -18,7 +18,7 @@ import hl2ss_lnm
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '169.254.58.146'#"192.168.1.7"
+host = '169.254.50.241'#"192.168.1.7"
 
 # Operating mode
 # 0: video
@@ -59,14 +59,22 @@ listener.start()
 client = hl2ss_lnm.rx_rm_depth_longthrow(host, hl2ss.StreamPort.RM_DEPTH_LONGTHROW, mode=mode, divisor=divisor)
 client.open()
 
+client2 = hl2ss_lnm.rx_rm_depth_longthrow(host, hl2ss.StreamPort.PERSONAL_VIDEO, mode=mode, divisor=divisor)
+client2.open()
+
 while (enable):
     data = client.get_next_packet()
+    #data2 = client2.get_next_packet()
 
-    print(f'Pose at time {data.timestamp}')
-    print(data.pose)
+    #print(f'Pose at time {data.timestamp}')
+    #print(data.pose)
     
-    cv2.imshow('Depth', data.payload.depth / np.max(data.payload.depth)) # Scaled for visibility
-    cv2.imshow('AB', data.payload.ab / np.max(data.payload.ab)) # Scaled for visibility
+    frame = data.payload.ab / np.max(data.payload.ab)
+    #frame2 = data2.payload.pv
+    
+
+    #cv2.imshow('Depth', data.payload.depth / np.max(data.payload.depth)) # Scaled for visibility
+    cv2.imshow('AB', frame) # Scaled for visibility
     cv2.waitKey(1)
 
 client.close()

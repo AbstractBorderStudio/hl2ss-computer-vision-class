@@ -12,27 +12,28 @@ import hl2ss_imshow
 import hl2ss
 import hl2ss_lnm
 import hl2ss_mp
+import output.Project.segmentation as sgt
 
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '192.168.1.7'
+host = '169.254.50.241'
 
 # Ports
 ports = [
-    hl2ss.StreamPort.RM_VLC_LEFTFRONT,
-    hl2ss.StreamPort.RM_VLC_LEFTLEFT,
-    hl2ss.StreamPort.RM_VLC_RIGHTFRONT,
-    hl2ss.StreamPort.RM_VLC_RIGHTRIGHT,
+    #hl2ss.StreamPort.RM_VLC_LEFTFRONT,
+    #hl2ss.StreamPort.RM_VLC_LEFTLEFT,
+    #hl2ss.StreamPort.RM_VLC_RIGHTFRONT,
+    #hl2ss.StreamPort.RM_VLC_RIGHTRIGHT,
     #hl2ss.StreamPort.RM_DEPTH_AHAT,
     hl2ss.StreamPort.RM_DEPTH_LONGTHROW,
     hl2ss.StreamPort.PERSONAL_VIDEO,
-    hl2ss.StreamPort.RM_IMU_ACCELEROMETER,
-    hl2ss.StreamPort.RM_IMU_GYROSCOPE,
-    hl2ss.StreamPort.RM_IMU_MAGNETOMETER,
-    hl2ss.StreamPort.MICROPHONE,
-    hl2ss.StreamPort.SPATIAL_INPUT,
-    hl2ss.StreamPort.EXTENDED_EYE_TRACKER,
+    #hl2ss.StreamPort.RM_IMU_ACCELEROMETER,
+    #hl2ss.StreamPort.RM_IMU_GYROSCOPE,
+    #hl2ss.StreamPort.RM_IMU_MAGNETOMETER,
+    #hl2ss.StreamPort.MICROPHONE,
+    #hl2ss.StreamPort.SPATIAL_INPUT,
+    #hl2ss.StreamPort.EXTENDED_EYE_TRACKER,
     ]
 
 # PV parameters
@@ -137,11 +138,40 @@ if __name__ == '__main__':
     }
 
     # Main loop ---------------------------------------------------------------
+    counter_x = counter_y = 0
     while (enable):
         for port in ports:
             _, data = sinks[port].get_most_recent_frame()
-            if (data is not None):
+            if (port == ports[0]):
+                ab = (data.payload.ab / np.max(data.payload.ab))*255
+                depth = np.float32(data.payload.depth / 1000)
+                frame = np.uint8((data.payload.ab / np.max(data.payload.ab)) * 255)
+                res, kp = sgt.Blob.FindCirclesFine(frame, applyEdge=True, applyGray=False, marker_color=(0,0,255), blobMethod=sgt.Blob.Config.SIMPLE_BLOB) 
+                
+                # if np.size(kp) > 0:
+                #     for k in kp:
+                #         x, y = k
+                #         print(depth[int(x), int(y)])
+                if (counter_y < 500):
+                    # file.write(str(data.payload.depth))
+                    # counter += 1
+                    path1 = f"output/imgs_long_3/ab/frame{counter_y}.png"
+                    cv2.imwrite(path1, ab)
+                    #np.savetxt("output/test.txt", data.payload.depth)
+                    counter_y += 1
+                
+                cv2.imshow(" ab", res)   
+            if (port == ports[1]):
+                pv = (data.payload.image / np.max(data.payload.image))*255
                 DISPLAY_MAP[port](port, data.payload)
+                if (counter_x < 500):
+                    # file.write(str(data.payload.depth))
+                    # counter += 1
+                    path1 = f"output/imgs_long_3/pv/frame{counter_x}.png"
+                    cv2.imwrite(path1, pv)
+                    #np.savetxt("output/test.txt", data.payload.depth)
+                    counter_x += 1
+                
         cv2.waitKey(1)
 
     # Stop streams ------------------------------------------------------------
