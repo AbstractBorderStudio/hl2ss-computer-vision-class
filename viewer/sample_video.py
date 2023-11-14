@@ -136,12 +136,47 @@ if __name__ == '__main__':
         hl2ss.StreamPort.EXTENDED_EYE_TRACKER : display_null,
     }
 
+    # Store -------------------------------------------------------------------
+    pv_path = '/viewer/output/stereo/src/pv'
+    lf_path = '/viewer/output/stereo/src/lf'
+    rf_path = '/viewer/output/stereo/src/rf'
+
+    def store_pv(port, payload, c):
+        if (payload.image is not None and payload.image.size > 0):
+            # store pv image
+            filename = f"pv_frame{c}.png"
+            cv2.imwrite(pv_path + filename, payload.image) 
+            pass
+
+    def store_lf(port, payload, c):
+        if (payload is not None and payload.size > 0):
+            # store rf & lf image
+            filename = f"lf_frame{c}.png"
+            cv2.imwrite(lf_path + filename, payload) 
+            pass
+
+    def store_rf(port, payload, c):
+        if (payload is not None and payload.size > 0):
+            # store rf & lf image
+            filename = f"rf_frame{c}.png"
+            cv2.imwrite(rf_path + filename, payload) 
+            pass
+
+    STORE_MAP = {
+        hl2ss.StreamPort.RM_VLC_LEFTFRONT     : store_lf,
+        hl2ss.StreamPort.RM_VLC_RIGHTFRONT    : store_rf,
+        hl2ss.StreamPort.PERSONAL_VIDEO       : store_pv
+    }
+
     # Main loop ---------------------------------------------------------------
+    counter = 0
     while (enable):
         for port in ports:
             _, data = sinks[port].get_most_recent_frame()
             if (data is not None):
                 DISPLAY_MAP[port](port, data.payload)
+                STORE_MAP[port](port, data.payload)
+        counter += 1
         cv2.waitKey(1)
 
     # Stop streams ------------------------------------------------------------
