@@ -63,6 +63,7 @@ class Blob:
 
     def FindCirclesFine(
             img, 
+            applyColored=True,
             applyGray=True, 
             applyBlur=True, 
             applyThresh=True,
@@ -94,6 +95,8 @@ class Blob:
 
         - img: 
             - frame to analize
+        - applyColored (True):
+            - allow/skip colored masking -> if true applyGray, applyBlur, applyTresh are set to False
         - applyGray (True): 
             - allow/skip grayscale convertion pass 
         - applyBlur (True): 
@@ -116,7 +119,19 @@ class Blob:
 
         # reference to frame
         res = img
-
+        
+        #colored segmentation
+        #in order to choose the right color range, use this converter https://colorizer.org/
+        if applyColored:
+            applyGray = False
+            applyBlur = False
+            applyThresh = False
+            hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+            lower_limit = np.array([20,100,100])
+            upper_limit = np.array([40,255,255])
+            mask = res = cv2.inRange(hsv_img, lower_limit, upper_limit)
+            res = cv2.bitwise_not(res)
+            
         # grayscale image
         if applyGray:
             gray = res = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -140,7 +155,7 @@ class Blob:
             elif edgeMethod == Blob.Config.SOBEL:
                 edge = res = cv2.Sobel(src=res, ddepth=cv2.CV_64F, dx=1, dy=1, ksize=5)
 
-        # apply dialtion to highlight circlular areas.
+        # apply dilation to highlight circlular areas.
         if applyMorph:
             morph = res = cv2.dilate(res, np.ones((Blob.d_kernel_size,Blob.d_kernel_size)), iterations=1)
 
@@ -156,14 +171,17 @@ class Blob:
                     cv2.circle(img, center, int(r), marker_color, thickness=3) # add cv2.FILLED to fill the circle 
                     
         elif blobMethod == Blob.Config.SIMPLE_BLOB:
+            width, height = img.shape[:2]
+
             keypoints = Blob.detector.detect(res)
             
             if keypoints is not None:
                 points = cv2.KeyPoint.convert(keypoints)
                 if np.size(points) > 0:
                     x,y = points[0]
-                    r,g,b = img[int(x),int(y)]/255
-                    print(r)
+                    if applyColored==False:
+                        r,g,b = img[int(x),int(y)]/255
+                        print(r)
 
                 img = cv2.drawKeypoints(img, keypoints, np.array([]), marker_color, cv2.DRAW_MATCHES_FLAGS_DRAW_RICH_KEYPOINTS)
 

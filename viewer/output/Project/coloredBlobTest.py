@@ -4,6 +4,7 @@
 #3. integrare in segmentation (se risultato buono) 
 
 #Devo convertire l'immagine in HSV che è lo spazio di colori più comodo per effettuare segmentazione sul colore
+#Lab è un'altra buona soluzione per la segmentazione per colore
 
 import cv2 
 import numpy as np
@@ -26,17 +27,21 @@ upper_limit = np.array([40,255,255])
 
 #creiamo maschera per questo range di colori
 mask = cv2.inRange(hsv_image, lower_limit, upper_limit)
+
+
+
 # bounding box dall'immagine mascherata (da sostituire con  centers[i], radius[i] = cv.minEnclosingCircle(contours_poly[i]))
-bbox = cv2.boundingRect(mask)
+# bbox = cv2.boundingRect(mask)
 #center, radius = cv2.minEnclosingCircle(mask)
 
 #in questo momento stampa solo un bounding box -> aggiungere ciclo
-if bbox is not None:
-    print("Object detected")
-    x,y,w,h = bbox
-    cv2.rectangle(image, (x,y), (x+w, y+h), (0,255,0),2)
-else:
-    print("Object not detected")
-    
-cv2.imshow('image', image)
+#if bbox is not None:
+#    print("Object detected")
+#    x,y,w,h = bbox
+#    cv2.rectangle(image, (x,y), (x+w, y+h), (0,255,0),2)
+#else:
+#    print("Object not detected")
+
+# Print the mask as an image
+cv2.imshow('mask', mask)
 cv2.waitKey(0)
