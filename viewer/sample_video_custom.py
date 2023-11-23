@@ -26,7 +26,7 @@ ports = [
     hl2ss.StreamPort.RM_VLC_RIGHTFRONT,
     #hl2ss.StreamPort.RM_VLC_RIGHTRIGHT,
     #hl2ss.StreamPort.RM_DEPTH_AHAT,
-    #hl2ss.StreamPort.RM_DEPTH_LONGTHROW,
+    hl2ss.StreamPort.RM_DEPTH_LONGTHROW,
     hl2ss.StreamPort.PERSONAL_VIDEO,
     #hl2ss.StreamPort.RM_IMU_ACCELEROMETER,
     #hl2ss.StreamPort.RM_IMU_GYROSCOPE,
@@ -40,6 +40,12 @@ ports = [
 pv_width     = 760
 pv_height    = 428
 pv_framerate = 30
+
+#LT parameters
+lt_width     = 320
+lt_height    = 288
+lt_framerate = 5
+
 
 # Maximum number of frames in buffer
 buffer_elements = 150
@@ -138,9 +144,11 @@ if __name__ == '__main__':
     }
 
     # Store -------------------------------------------------------------------
-    pv_path = 'C:/Users/ilari/OneDrive/Documents/GitHub/hl2ss-computer-vision-class/viewer/output/stereo/src/pv/'
-    lf_path = 'C:/Users/ilari/OneDrive/Documents/GitHub/hl2ss-computer-vision-class/viewer/output/stereo/src/lf/'
-    rf_path = 'C:/Users/ilari/OneDrive/Documents/GitHub/hl2ss-computer-vision-class/viewer/output/stereo/src/rf/'
+    #cambiare path se serve
+    pv_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/pv/'
+    lf_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/lf/'
+    rf_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/rf/'
+    lt_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/lt/'
 
     def store_pv(port, payload, c):
         if (payload.image is not None and payload.image.size > 0):
@@ -162,11 +170,19 @@ if __name__ == '__main__':
             filename = f"rf_frame{c}.png"
             cv2.imwrite(rf_path + filename, payload) 
             pass
+        
+    def store_lt(port, payload, c):
+        if (payload.depth is not None and payload.depth.size > 0):
+            # store rf & lf image
+            filename = f"lt_frame{c}.png"
+            cv2.imwrite(lt_path + filename, payload.depth * 8) 
+            pass
 
     STORE_MAP = {
         hl2ss.StreamPort.RM_VLC_LEFTFRONT     : store_lf,
         hl2ss.StreamPort.RM_VLC_RIGHTFRONT    : store_rf,
-        hl2ss.StreamPort.PERSONAL_VIDEO       : store_pv
+        hl2ss.StreamPort.PERSONAL_VIDEO       : store_pv,
+        hl2ss.StreamPort.RM_DEPTH_LONGTHROW   : store_lt
     }
 
     def cv_lf(port, payload):
@@ -177,13 +193,27 @@ if __name__ == '__main__':
 
     def cv_pv(port, payload):
         if (payload.image is not None and payload.image.size > 0):
-            res = sgt.Blob.FindCirclesFine(payload.image, applyMorph=True, showPasses = True, blobMethod = sgt.Blob.Config.SIMPLE_BLOB)
+            res = sgt.Blob.FindCirclesFine(payload.image, applyMorph=True, blobMethod = sgt.Blob.Config.SIMPLE_BLOB)
             cv2.imshow(hl2ss.get_port_name(port), res)
+            
+    def cv_lt(port, payload):
+        #displays long throw depth
+        if (payload.depth is not None and payload.depth.size > 0):
+            cv2.imshow(hl2ss.get_port_name(port) + '-depth', payload.depth * 8) # Scaled for visibility
+            
+    def cv_ah(port, payload):
+        if (payload.depth is not None and payload.depth.size > 0):
+            cv2.imshow(hl2ss.get_port_name(port) + '-depth', payload.depth * 64) # Scaled for visibility
+        #if (payload.ab is not None and payload.ab.size > 0):
+        #   cv2.imshow(hl2ss.get_port_name(port) + '-ab', payload.ab)
 
     CV_MAP = {
         hl2ss.StreamPort.RM_VLC_LEFTFRONT     : cv_lf,
         hl2ss.StreamPort.RM_VLC_RIGHTFRONT    : cv_rf,
-        hl2ss.StreamPort.PERSONAL_VIDEO       : cv_pv
+        hl2ss.StreamPort.PERSONAL_VIDEO       : cv_pv,
+        hl2ss.StreamPort.RM_DEPTH_LONGTHROW   : cv_lt,
+        hl2ss.StreamPort.RM_DEPTH_AHAT        : cv_ah
+        
     }
 
     # Main loop ---------------------------------------------------------------
@@ -192,9 +222,9 @@ if __name__ == '__main__':
         for port in ports:
             _, data = sinks[port].get_most_recent_frame()
             if (data is not None):
-                #DISPLAY_MAP[port](port, data.payload)
-                CV_MAP[port](port, data.payload)
-                #STORE_MAP[port](port, data.payload,counter)
+                DISPLAY_MAP[port](port, data.payload)
+                #CV_MAP[port](port, data.payload)
+                STORE_MAP[port](port, data.payload,counter)
         counter += 1
         cv2.waitKey(1)
 
