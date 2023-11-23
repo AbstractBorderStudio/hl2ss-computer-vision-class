@@ -4,7 +4,7 @@ import numpy as np
 import Project.segmentation as sgt
 
 # Path to the folder containing your images
-image_folder = 'imgs_long/ab'
+image_folder = 'Project/Colored_frames'
 
 # Get a list of image files in the folder
 images = [img for img in os.listdir(image_folder) if img.endswith('.png')]#(not img.endswith("ab.pgm") and img.endswith(".png"))]
@@ -25,11 +25,11 @@ for image in images:
 
     # apply edge 
     #circle = Project.segmentation.FindCirclesSimpleBlob(frame)
-    circle2, a = sgt.Blob.FindCirclesFine(
-        frame, 
-        marker_color=(0,0,255), 
-        blobMethod=sgt.Blob.Config.HOUGHCIRCLE)
-
+    #versione con edge detection e HoughCircle
+    #circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(80,150,255))
+    
+    #versione con simpleBlob detection e senza Edge detection -> non funziona abbastanza bene perchè la mano ha lo stesso colore della sfera
+    circle2 = sgt.Blob.FindCirclesFine(frame, applyMorph=True, showPasses = True, blobMethod = sgt.Blob.Config.SIMPLE_BLOB)
     #video.write(circle)
 
     # show result
