@@ -29,7 +29,7 @@ for image in images:
     #circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(80,150,255))
     
     #versione con simpleBlob detection e senza Edge detection -> non funziona abbastanza bene perchè la mano ha lo stesso colore della sfera
-    circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(0,0,255), applyColored=True, applyEdge = False, showPasses = True, blobMethod = sgt.Blob.Config.SIMPLE_BLOB)
+    circle2 = sgt.Blob.FindCirclesFine(frame, applyMorph=True, showPasses = True, blobMethod = sgt.Blob.Config.SIMPLE_BLOB)
     #video.write(circle)
 
     # show result

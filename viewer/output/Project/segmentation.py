@@ -64,12 +64,12 @@ class Blob:
     def FindCirclesFine(
             img, 
             applyColored=True,
-            applyGray=True, 
-            applyBlur=True, 
-            applyThresh=True,
-            applyEdge=True,
-            applyMorph=True,
-            marker_color=(0,255,0),
+            applyGray=False, 
+            applyBlur=False, 
+            applyThresh=False,
+            applyEdge=False,
+            applyMorph=False,
+            marker_color=(0,0,255),
             showPasses=False,
             edgeMethod=Config.CANNY,
             blobMethod=Config.HOUGHCIRCLE):
@@ -97,15 +97,15 @@ class Blob:
             - frame to analize
         - applyColored (True):
             - allow/skip colored masking -> if true applyGray, applyBlur, applyTresh are set to False
-        - applyGray (True): 
+        - applyGray (False): 
             - allow/skip grayscale convertion pass 
-        - applyBlur (True): 
+        - applyBlur (False): 
             - allow/skip blur pass 
-        - applyThresh (True): 
+        - applyThresh (False): 
             - allow/skip thresholding pass
-        - applyEdge (True): 
+        - applyEdge (False): 
             - allow/skip edgedetection pass
-        - applyMorph (True): 
+        - applyMorph (False): 
             - allow/skip morphing operator pass
         - marker_color (0,255,0):
             - set marker color
