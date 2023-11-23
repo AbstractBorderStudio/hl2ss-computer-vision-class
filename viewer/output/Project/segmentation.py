@@ -191,6 +191,7 @@ class Blob:
 
         return img to only show the finale result. 
         """
+        #ripensare meglio questa parte 
         if showPasses:
             if applyEdge:
                 edge = cv2.cvtColor(edge, cv2.COLOR_GRAY2BGR)   

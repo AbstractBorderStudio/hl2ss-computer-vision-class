@@ -22,7 +22,7 @@ import output.Project.segmentation as sgt
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '169.254.58.146'#"192.168.1.7"
+host = '169.254.58.146'#"192.168.1.7" "169.254.50.241"
 
 # Operating mode
 # 0: video
