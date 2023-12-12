@@ -17,7 +17,7 @@ import output.Project.segmentation as sgt
 # Settings --------------------------------------------------------------------
 
 # HoloLens address
-host = '169.254.58.146' #'169.254.50.241'
+host = '169.254.50.241' #'169.254.58.146' 
 
 # Ports
 ports = [
@@ -145,10 +145,10 @@ if __name__ == '__main__':
 
     # Store -------------------------------------------------------------------
     #cambiare path se serve
-    pv_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/pv/'
-    lf_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/lf/'
-    rf_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/rf/'
-    lt_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/src/lt/'
+    pv_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/alongZ/pv/'
+    lf_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/alongZ/lf/'
+    rf_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/alongZ/rf/'
+    lt_path = 'C:/Users/marti/Desktop/Poli/Image Processing and Computer Vision/Progetto/hl2ss-computer-vision-class/viewer/output/stereo/alongZ/lt/'
 
     def store_pv(port, payload, c):
         if (payload.image is not None and payload.image.size > 0):

@@ -127,9 +127,11 @@ class Blob:
             applyBlur = False
             applyThresh = False
             hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-            lower_limit = np.array([20,100,100])
-            upper_limit = np.array([40,255,255])
-            mask = res = cv2.inRange(hsv_img, lower_limit, upper_limit)
+            yellow = np.uint8([[[0, 207, 235]]])
+            hsvYellow = cv2.cvtColor(yellow, cv2.COLOR_BGR2HSV)
+            yellow_lower = np.array([hsvYellow[0][0][0] - 10, 30, 100])
+            yellow_upper = np.array([hsvYellow[0][0][0] + 10, 255, 255])
+            mask = res = cv2.inRange(hsv_img, yellow_lower, yellow_upper)
             res = cv2.bitwise_not(res)
             
         # grayscale image
