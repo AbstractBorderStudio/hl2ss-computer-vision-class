@@ -129,8 +129,8 @@ class Blob:
             hsv_img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
             yellow = np.uint8([[[0, 207, 235]]])
             hsvYellow = cv2.cvtColor(yellow, cv2.COLOR_BGR2HSV)
-            yellow_lower = np.array([hsvYellow[0][0][0] - 10, 30, 100])
-            yellow_upper = np.array([hsvYellow[0][0][0] + 10, 255, 255])
+            yellow_lower = np.array([hsvYellow[0][0][0] - 5, 30, 100])
+            yellow_upper = np.array([hsvYellow[0][0][0] + 5, 255, 255])
             mask = res = cv2.inRange(hsv_img, yellow_lower, yellow_upper)
             res = cv2.bitwise_not(res)
             

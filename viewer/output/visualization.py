@@ -3,8 +3,11 @@ import cv2
 import numpy as np
 import Project.segmentation as sgt
 
+#net_path = 'viewer/output/stereo/dpt_swin2_large_384.pt'
+#net = cv2.dnn.readNet(net_path)
+
 # Path to the folder containing your images
-image_folder = 'Project/Colored_frames'
+image_folder = 'viewer/output/stereo/pivot50/pv/'
 
 # Get a list of image files in the folder
 images = [img for img in os.listdir(image_folder) if img.endswith('.png')]#(not img.endswith("ab.pgm") and img.endswith(".png"))]
@@ -29,11 +32,11 @@ for image in images:
     #circle2 = sgt.Blob.FindCirclesFine(frame, marker_color=(80,150,255))
     
     #versione con simpleBlob detection e senza Edge detection -> non funziona abbastanza bene perchè la mano ha lo stesso colore della sfera
-    circle2 = sgt.Blob.FindCirclesFine(frame, applyMorph=True, showPasses = True, blobMethod = sgt.Blob.Config.SIMPLE_BLOB)
+    frame = sgt.Blob.FindCirclesFine(frame, applyMorph=True, showPasses=True, blobMethod=sgt.Blob.Config.SIMPLE_BLOB)
     #video.write(circle)
 
     # show result
-    cv2.imshow('simple blob detection', circle2)
+    cv2.imshow('Colored Blob Detection', frame)
     #cv2.imshow('custom blob detection', circle2)
 
     # Break the loop if the user presses the 'q'q key
